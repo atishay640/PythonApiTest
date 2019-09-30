@@ -1,7 +1,7 @@
 import requests
 from http import HTTPStatus
 import pytest
-from jsonpath import jsonpath
+from src.main.python.model.user import *
 
 
 @pytest.fixture
@@ -40,9 +40,12 @@ def test_delete_user(base_url):
 
 def test_get_user(base_url):
     id = 2
-    url = f"{base_url}/api/unknown/{id}"
+    url = f"{base_url}/api/users/{id}"
     response = requests.get(url=url)
     body = response.json()
-    id_in_res = body["data"]["id"]
-    assert id_in_res == id
-
+    user_json = body["data"]
+    user = User.from_json_or_dict(user_json)
+    assert user.id == id
+    assert user.first_name == "Janet"
+    assert user.last_name == "Weaver"
+    assert user.email == "janet.weaver@reqres.in"
